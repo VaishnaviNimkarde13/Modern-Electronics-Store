@@ -39,7 +39,8 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import AddShoppingCartIcon       from "@mui/icons-material/AddShoppingCart";
 import CheckCircleOutlineIcon    from "@mui/icons-material/CheckCircleOutline";
 import BoltIcon                  from "@mui/icons-material/Bolt";
-
+// import AuthPage                  from "./login"; // Import the AuthPage component
+import AuthPage from "../Pages/Login";
 // ══════════════════════════════════════════════════════════
 //  THEME
 // ══════════════════════════════════════════════════════════
@@ -631,6 +632,7 @@ function NavbarInner() {
   const [drawerOpen, setDrawerOpen]   = useState(false);
   const [searchOpen, setSearchOpen]   = useState(false);
   const [cartOpen, setCartOpen]       = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false); // ADDED: State for login modal
   const [activeLink, setActiveLink]   = useState("home");
   const [toast, setToast]             = useState({ open: false, name: "" });
   const navigate = useNavigate();
@@ -701,6 +703,15 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
   onRemove={handleRemoveFromCart}
   onCheckout={handleCheckout}  
 />
+
+      {/* ────────────────────────────
+          LOGIN MODAL - ADDED
+      ──────────────────────────── */}
+      <AuthPage
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        defaultTab="login"
+      />
 
       {/* ────────────────────────────
           TOAST
@@ -807,8 +818,9 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
                 </NavIconBtn>
               </Box>
 
+              {/* UPDATED: Account button - opens modal instead of navigate */}
               <Button
-                onClick={() => navigate("/login")}
+                onClick={() => setLoginModalOpen(true)}
                 startIcon={<PersonOutlineIcon />}
                 sx={{
                   display: { xs: "none", sm: "inline-flex" },
@@ -821,6 +833,11 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
                   textTransform: "uppercase",
                   background: GOLD,
                   color: INK,
+                  '&:hover': {
+                    background: GOLD2,
+                    transform: 'translateY(-1px)',
+                  },
+                  transition: 'all 0.2s ease',
                 }}
               >
                 Account
@@ -994,12 +1011,13 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
             </Box>
           </Stack>
 
+          {/* UPDATED: Account button in mobile drawer - opens modal */}
           <Button
             fullWidth
             startIcon={<AccountCircleOutlinedIcon />}
             onClick={() => {
               setDrawerOpen(false);
-              navigate("/login");
+              setLoginModalOpen(true);
             }}
             sx={{
               py: 1.75,
