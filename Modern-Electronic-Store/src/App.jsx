@@ -5,6 +5,7 @@ import Home from "./Pages/Home";
 import Services from "./Pages/Services";
 import Contact from "./Pages/Contact";
 import AuthPage from "./Pages/Login";
+import Products from "./Pages/Products";
 
 function MainPage() {
   return (
@@ -13,6 +14,10 @@ function MainPage() {
 
       <div id="home" style={{ paddingTop: "80px" }}>
         <Home />
+      </div>
+
+      <div id="products" style={{ paddingTop: "80px" }}>
+        <Products />
       </div>
 
       <div id="services" style={{ paddingTop: "80px" }}>
