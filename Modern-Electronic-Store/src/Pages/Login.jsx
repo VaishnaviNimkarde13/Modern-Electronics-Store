@@ -36,7 +36,6 @@ const C = {
   blue3:    '#3b82f6',
 };
 
-/* ── Global CSS ── */
 const globalStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,800;0,900;1,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
   @keyframes blobMove {
@@ -50,9 +49,16 @@ const globalStyles = `
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: #111010; }
   ::-webkit-scrollbar-thumb { background: #e8a020; border-radius: 3px; }
+  /* Override autofill background color */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #1e1c1a inset !important;
+    -webkit-text-fill-color: #f0ebe0 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 `;
-
-/* ── Shared dark input style (transparent background) ── */
 const inputSx = {
   '& .MuiOutlinedInput-root': {
     borderRadius: '10px',
