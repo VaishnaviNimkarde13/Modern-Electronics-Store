@@ -46,17 +46,17 @@ const globalStyles = `
   @keyframes scaleIn     { from { opacity:0; transform:scale(0.94); }      to { opacity:1; transform:scale(1); }    }
   @keyframes fadeSlideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #111010; }
+  body { background: #111010; overflow-y: auto; }
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: #111010; }
   ::-webkit-scrollbar-thumb { background: #e8a020; border-radius: 3px; }
 `;
 
-/* ── Shared dark input style ── */
+/* ── Shared dark input style (transparent background) ── */
 const inputSx = {
   '& .MuiOutlinedInput-root': {
     borderRadius: '10px',
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: 'transparent',
     fontSize: 14,
     color: C.text,
     fontFamily: '"Plus Jakarta Sans", sans-serif',
@@ -111,7 +111,7 @@ function SocialBtn({ icon, label }) {
   return (
     <Button fullWidth startIcon={icon} variant="outlined"
       sx={{
-        borderRadius: '10px', py: 1.3, fontSize: 13, fontWeight: 600,
+        borderRadius: '10px', py: 1.1, fontSize: 13, fontWeight: 600,
         color: C.text, borderColor: C.border, borderWidth: '1.5px',
         bgcolor: 'rgba(255,255,255,0.04)', textTransform: 'none',
         fontFamily: '"Plus Jakarta Sans", sans-serif',
@@ -146,22 +146,22 @@ function LoginForm({ onSwitch }) {
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ animation: 'fadeSlideIn 0.3s ease' }}>
 
-      <Box sx={{ display: 'flex', gap: 1.5, mb: 2.5 }}>
+      <Box sx={{ display: 'flex', gap: 1.2, mb: 2 }}>
         <SocialBtn icon={<GoogleIcon sx={{ fontSize: 17 }} />} label="Google" />
         <SocialBtn icon={<AppleIcon  sx={{ fontSize: 17 }} />} label="Apple"  />
       </Box>
 
-      <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.08)' }}>
+      <Divider sx={{ my: 1.8, borderColor: 'rgba(255,255,255,0.08)' }}>
         <Typography sx={{ fontSize: 12, color: C.muted2, px: 1.5, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>or use email</Typography>
       </Divider>
 
       <Fade in={!!error}>
-        <Alert severity="error" sx={{ mb: 2, borderRadius: '10px', bgcolor: 'rgba(196,74,26,0.15)', border: '1px solid rgba(196,74,26,0.3)', color: C.text, '& .MuiAlert-icon': { color: C.coral } }}>
+        <Alert severity="error" sx={{ mb: 1.5, borderRadius: '10px', bgcolor: 'rgba(196,74,26,0.15)', border: '1px solid rgba(196,74,26,0.3)', color: C.text, '& .MuiAlert-icon': { color: C.coral } }}>
           {error}
         </Alert>
       </Fade>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.2 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.8 }}>
 
         <TextField fullWidth label="EMAIL" name="email" type="email"
           placeholder="you@example.com" value={form.email} onChange={onChange}
@@ -244,22 +244,22 @@ function SignupForm({ onSwitch }) {
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ animation: 'fadeSlideIn 0.3s ease' }}>
 
-      <Box sx={{ display: 'flex', gap: 1.5, mb: 2.5 }}>
+      <Box sx={{ display: 'flex', gap: 1.2, mb: 2 }}>
         <SocialBtn icon={<GoogleIcon sx={{ fontSize: 17 }} />} label="Google" />
         <SocialBtn icon={<AppleIcon  sx={{ fontSize: 17 }} />} label="Apple"  />
       </Box>
 
-      <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.08)' }}>
+      <Divider sx={{ my: 1.8, borderColor: 'rgba(255,255,255,0.08)' }}>
         <Typography sx={{ fontSize: 12, color: C.muted2, px: 1.5, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>or sign up with email</Typography>
       </Divider>
 
       <Fade in={!!error}>
-        <Alert severity="error" sx={{ mb: 2, borderRadius: '10px', bgcolor: 'rgba(196,74,26,0.15)', border: '1px solid rgba(196,74,26,0.3)', color: C.text, '& .MuiAlert-icon': { color: C.coral } }}>
+        <Alert severity="error" sx={{ mb: 1.5, borderRadius: '10px', bgcolor: 'rgba(196,74,26,0.15)', border: '1px solid rgba(196,74,26,0.3)', color: C.text, '& .MuiAlert-icon': { color: C.coral } }}>
           {error}
         </Alert>
       </Fade>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={1.5}>
 
         <Grid item xs={12} sm={6}>
           <TextField fullWidth label="FIRST NAME" name="firstName" placeholder="Rahul"
@@ -305,25 +305,25 @@ function SignupForm({ onSwitch }) {
             }}
           />
           {form.password.length > 0 && (
-            <Box sx={{ mt: 1.2 }}>
-              <Box sx={{ display: 'flex', gap: '5px', mb: 0.7 }}>
+            <Box sx={{ mt: 1 }}>
+              <Box sx={{ display: 'flex', gap: '5px', mb: 0.5 }}>
                 {[1, 2, 3, 4].map(s => (
                   <Box key={s} sx={{ flex: 1, height: 4, borderRadius: 4, bgcolor: strength >= s ? strengthMeta[strength].color : 'rgba(255,255,255,0.10)', transition: 'background-color 0.3s ease' }} />
                 ))}
               </Box>
-              <Typography sx={{ fontSize: 12, fontWeight: 600, color: strengthMeta[strength].color }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 600, color: strengthMeta[strength].color }}>
                 {strengthMeta[strength].label && `${strengthMeta[strength].label} password`}
               </Typography>
             </Box>
           )}
           {pwdFocus && form.password.length > 0 && (
-            <Box sx={{ mt: 1.5, p: '12px 14px', bgcolor: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <Box sx={{ mt: 1, p: '10px 12px', bgcolor: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }}>
               {pwdRules.map(r => {
                 const pass = r.test(form.password);
                 return (
-                  <Box key={r.label} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, '&:last-child': { mb: 0 } }}>
-                    {pass ? <CheckCircleIcon sx={{ fontSize: 13, color: C.green }} /> : <RadioButtonUncheckedIcon sx={{ fontSize: 13, color: C.muted2 }} />}
-                    <Typography sx={{ fontSize: 12, color: pass ? C.green : C.muted, fontWeight: pass ? 600 : 400 }}>{r.label}</Typography>
+                  <Box key={r.label} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.4, '&:last-child': { mb: 0 } }}>
+                    {pass ? <CheckCircleIcon sx={{ fontSize: 12, color: C.green }} /> : <RadioButtonUncheckedIcon sx={{ fontSize: 12, color: C.muted2 }} />}
+                    <Typography sx={{ fontSize: 11, color: pass ? C.green : C.muted, fontWeight: pass ? 600 : 400 }}>{r.label}</Typography>
                   </Box>
                 );
               })}
@@ -356,8 +356,8 @@ function SignupForm({ onSwitch }) {
               ),
             }}
           />
-          {pwdMatch    && <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, mt: 0.6 }}><CheckCircleIcon sx={{ fontSize: 13, color: C.green }} /><Typography sx={{ fontSize: 12, color: C.green, fontWeight: 600 }}>Passwords match</Typography></Box>}
-          {pwdBadMatch && <Typography sx={{ fontSize: 12, color: C.coral, mt: 0.6 }}>Passwords do not match</Typography>}
+          {pwdMatch    && <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, mt: 0.5 }}><CheckCircleIcon sx={{ fontSize: 12, color: C.green }} /><Typography sx={{ fontSize: 11, color: C.green, fontWeight: 600 }}>Passwords match</Typography></Box>}
+          {pwdBadMatch && <Typography sx={{ fontSize: 11, color: C.coral, mt: 0.5 }}>Passwords do not match</Typography>}
         </Grid>
 
         {/* Terms */}
@@ -365,7 +365,7 @@ function SignupForm({ onSwitch }) {
           <FormControlLabel
             control={<Checkbox size="small" checked={agreed} onChange={e => setAgreed(e.target.checked)} sx={{ color: 'rgba(255,255,255,0.15)', '&.Mui-checked': { color: C.gold }, p: '4px', mr: 0.5 }} />}
             label={
-              <Typography sx={{ fontSize: 13, color: C.muted, lineHeight: 1.6, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
+              <Typography sx={{ fontSize: 12, color: C.muted, lineHeight: 1.5, fontFamily: '"Plus Jakarta Sans", sans-serif' }}>
                 I agree to the{' '}
                 <Box component="span" sx={{ color: C.gold, fontWeight: 600, cursor: 'pointer', '&:hover': { color: C.gold2 } }}>Terms of Service</Box>
                 {' '}and{' '}
@@ -410,7 +410,7 @@ export default function AuthPage({ defaultTab = 'login' }) {
         minHeight: '100vh',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         bgcolor: C.bg, position: 'relative', overflow: 'hidden',
-        fontFamily: '"Plus Jakarta Sans", sans-serif', py: 5,
+        fontFamily: '"Plus Jakarta Sans", sans-serif', py: 4,
       }}>
 
         {/* Amber glow blobs */}
@@ -427,37 +427,37 @@ export default function AuthPage({ defaultTab = 'login' }) {
             borderRadius: '24px',
             border: '1.5px solid rgba(232,160,32,0.18)',
             bgcolor: C.card,
-            p: { xs: '28px 22px', sm: '44px' },
+            p: { xs: '24px 20px', sm: '32px' },
             boxShadow: '0 24px 80px rgba(0,0,0,0.55)',
             animation: 'scaleIn 0.35s ease',
             transition: 'all 0.3s ease',
           }}>
 
             {/* Logo */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.4, mb: 3.5 }}>
-              <Box sx={{ width: 42, height: 42, borderRadius: '11px', background: `linear-gradient(135deg, ${C.goldD}, ${C.gold})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(232,160,32,0.40)' }}>
-                <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 19, color: '#0e0d0b' }}>V</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.2, mb: 2.5 }}>
+              <Box sx={{ width: 38, height: 38, borderRadius: '10px', background: `linear-gradient(135deg, ${C.goldD}, ${C.gold})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(232,160,32,0.40)' }}>
+                <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 18, color: '#0e0d0b' }}>V</Typography>
               </Box>
-              <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 800, fontSize: 22, letterSpacing: 2, color: C.text }}>
+              <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 800, fontSize: 20, letterSpacing: 2, color: C.text }}>
                 VOLT<span style={{ color: C.gold }}>EX</span>
               </Typography>
             </Box>
 
             {/* Heading */}
-            <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 30, color: C.text, textAlign: 'center', mb: 0.6, letterSpacing: '-0.5px' }}>
+            <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 28, color: C.text, textAlign: 'center', mb: 0.5, letterSpacing: '-0.5px' }}>
               {isLogin ? 'Welcome Back' : 'Create Account'}
             </Typography>
-            <Typography sx={{ fontSize: 14, color: C.muted, textAlign: 'center', mb: 3.5 }}>
+            <Typography sx={{ fontSize: 13, color: C.muted, textAlign: 'center', mb: 2.5 }}>
               {isLogin ? 'Sign in to your account' : 'Join 12,000+ happy VOLTEX customers'}
             </Typography>
 
             {/* Tab switcher — dark pill style matching screenshot */}
-            <Box sx={{ display: 'flex', bgcolor: 'rgba(255,255,255,0.05)', borderRadius: '12px', p: '5px', border: '1.5px solid rgba(255,255,255,0.08)', mb: 3.5, gap: '4px' }}>
-              <Box onClick={() => setTab('login')} sx={{ flex: 1, py: 1.15, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isLogin ? C.gold : 'transparent', boxShadow: isLogin ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isLogin ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
-                <Typography sx={{ fontSize: 13, fontWeight: 700, color: isLogin ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Sign In</Typography>
+            <Box sx={{ display: 'flex', bgcolor: 'rgba(255,255,255,0.05)', borderRadius: '12px', p: '4px', border: '1.5px solid rgba(255,255,255,0.08)', mb: 2.5, gap: '4px' }}>
+              <Box onClick={() => setTab('login')} sx={{ flex: 1, py: 1, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isLogin ? C.gold : 'transparent', boxShadow: isLogin ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isLogin ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
+                <Typography sx={{ fontSize: 12, fontWeight: 700, color: isLogin ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Sign In</Typography>
               </Box>
-              <Box onClick={() => setTab('signup')} sx={{ flex: 1, py: 1.15, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isSignup ? C.gold : 'transparent', boxShadow: isSignup ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isSignup ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
-                <Typography sx={{ fontSize: 13, fontWeight: 700, color: isSignup ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Create Account</Typography>
+              <Box onClick={() => setTab('signup')} sx={{ flex: 1, py: 1, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isSignup ? C.gold : 'transparent', boxShadow: isSignup ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isSignup ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
+                <Typography sx={{ fontSize: 12, fontWeight: 700, color: isSignup ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Create Account</Typography>
               </Box>
             </Box>
 
@@ -469,9 +469,9 @@ export default function AuthPage({ defaultTab = 'login' }) {
           </Paper>
 
           {/* Back to home */}
-          <Box sx={{ textAlign: 'center', mt: 2.5 }}>
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Button href="/" startIcon={<ArrowBackIcon sx={{ fontSize: '14px !important' }} />}
-              sx={{ color: C.muted2, fontSize: 13, fontWeight: 500, textTransform: 'none', fontFamily: '"Plus Jakarta Sans", sans-serif', '&:hover': { color: C.gold, bgcolor: 'transparent' } }}>
+              sx={{ color: C.muted2, fontSize: 12, fontWeight: 500, textTransform: 'none', fontFamily: '"Plus Jakarta Sans", sans-serif', '&:hover': { color: C.gold, bgcolor: 'transparent' } }}>
               Back to Home
             </Button>
           </Box>
