@@ -12,7 +12,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { keyframes } from "@mui/system";
+import { keyframes, margin } from "@mui/system";
 import PlaceIcon        from "@mui/icons-material/Place";
 import PhoneIcon        from "@mui/icons-material/Phone";
 import EmailIcon        from "@mui/icons-material/Email";
@@ -220,12 +220,24 @@ export default function Contact() {
 
         {/* ── Two-column grid (.ct-grid) ── */}
         {/* HTML: grid-template-columns:1fr 1.4fr; gap:64px */}
-        <Grid
+        {/* <Grid
           container
           spacing={{ xs: 5, md: 8 }}
           alignItems="flex-start"
-          sx={{ mt: { xs: 4, md: 7.5 } }}
-        >
+          sx={{ mt: { xs: 4, md: 7.5 }  }}
+          
+          
+        > */}
+
+        <Grid
+  container
+  spacing={{ xs: 5, md: 8 }}
+  alignItems="flex-start"
+  sx={{ 
+    mt: { xs: 4, md: 7.5 },
+    ml: "60px"   
+  }}
+>
 
           {/* ════════════════════════════════
               LEFT — Info cards (.ct-info)
