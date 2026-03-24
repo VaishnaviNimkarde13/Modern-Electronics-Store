@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import {
   AppBar,
   Toolbar,
@@ -94,7 +95,6 @@ const NAV_LINKS = [
   { label: "Products", href: "#products", icon: <Inventory2OutlinedIcon />  },
   { label: "Services", href: "#services", icon: <BuildOutlinedIcon />       },
   { label: "Contact",  href: "#contact",  icon: <MailOutlineIcon />         },
-  
 ];
 
 // ══════════════════════════════════════════════════════════
@@ -456,7 +456,7 @@ function SearchOverlay({ open, onClose, onAddToCart, cartItems }) {
 // ══════════════════════════════════════════════════════════
 //  CART DRAWER
 // ══════════════════════════════════════════════════════════
-function CartDrawer({ open, onClose, cartItems, onRemove }) {
+function CartDrawer({ open, onClose, cartItems, onRemove, onCheckout }) {
   const total = cartItems.reduce((sum, i) => sum + i.price, 0);
 
   return (
@@ -601,22 +601,23 @@ function CartDrawer({ open, onClose, cartItems, onRemove }) {
               ${total.toFixed(2)}
             </Typography>
           </Stack>
-          <Button
-            fullWidth
-            sx={{
-              py: 1.75,
-              borderRadius: "10px",
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: "0.8px",
-              textTransform: "uppercase",
-              background: GOLD,
-              color: INK,
-              "&:hover": { background: GOLD2, boxShadow: "0 12px 32px rgba(232,160,32,0.35)" },
-            }}
-          >
-            Checkout
-          </Button>
+         <Button
+  fullWidth
+  onClick={onCheckout}   
+  sx={{
+    py: 1.75,
+    borderRadius: "10px",
+    fontSize: 14,
+    fontWeight: 700,
+    letterSpacing: "0.8px",
+    textTransform: "uppercase",
+    background: GOLD,
+    color: INK,
+    "&:hover": { background: GOLD2, boxShadow: "0 12px 32px rgba(232,160,32,0.35)" },
+  }}
+>
+  Checkout
+</Button>
         </Box>
       )}
     </Drawer>
@@ -624,40 +625,42 @@ function CartDrawer({ open, onClose, cartItems, onRemove }) {
 }
 
 // ══════════════════════════════════════════════════════════
-//  NAVBAR COMPONENT
+//  NAVBAR COMPONENT (FIXED – USES CONTEXT)
 // ══════════════════════════════════════════════════════════
 function NavbarInner() {
   const [drawerOpen, setDrawerOpen]   = useState(false);
   const [searchOpen, setSearchOpen]   = useState(false);
   const [cartOpen, setCartOpen]       = useState(false);
-  const [cartItems, setCartItems]     = useState([]);
   const [activeLink, setActiveLink]   = useState("home");
   const [toast, setToast]             = useState({ open: false, name: "" });
   const navigate = useNavigate();
   const stuck = useScrollTrigger({ disableHysteresis: true, threshold: 60 });
 
+const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
   const cartCount = cartItems.length;
 
   const handleAddToCart = (product) => {
-    setCartItems((prev) => {
-      if (prev.find((i) => i.id === product.id)) return prev;
-      return [...prev, product];
-    });
+    addToCart(product);
     setToast({ open: true, name: product.name });
   };
 
-  const handleRemoveFromCart = (id) => {
-    setCartItems((prev) => prev.filter((i) => i.id !== id));
-  };
 
-  // Close search on ESC
+  const handleRemoveFromCart = (id) => {
+    removeFromCart(id);
+  };
+   const handleCheckout = () => {
+  clearCart();        
+  setCartOpen(false);    
+  setToast({ open: true, name: "Order placed successfully!" });
+
+};
+
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") setSearchOpen(false); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Highlight active section on scroll
   useEffect(() => {
     const onScroll = () => {
       let current = NAV_LINKS[0].href.replace("#", "");
@@ -691,12 +694,13 @@ function NavbarInner() {
       {/* ────────────────────────────
           CART DRAWER
       ──────────────────────────── */}
-      <CartDrawer
-        open={cartOpen}
-        onClose={() => setCartOpen(false)}
-        cartItems={cartItems}
-        onRemove={handleRemoveFromCart}
-      />
+    <CartDrawer
+  open={cartOpen}
+  onClose={() => setCartOpen(false)}
+  cartItems={cartItems}
+  onRemove={handleRemoveFromCart}
+  onCheckout={handleCheckout}  
+/>
 
       {/* ────────────────────────────
           TOAST
@@ -791,7 +795,6 @@ function NavbarInner() {
 
             {/* Right side actions */}
             <Stack direction="row" alignItems="center" spacing={1.25}>
-
               {/* Search icon */}
               <NavIconBtn onClick={() => setSearchOpen(true)} active={searchOpen}>
                 <SearchIcon sx={{ fontSize: 18 }} />

@@ -1,5 +1,7 @@
+import React from 'react';
 import { Box, Container } from "@mui/material";
 import { keyframes } from "@mui/system";
+import { useCart } from "../context/CartContext";
 
 // ══════════════════════════════════════════════════════════════
 //  TOKENS
@@ -49,7 +51,6 @@ const marquee = keyframes`
   to   { transform: translateX(-50%); }
 `;
 
-// Gold gradient — must be on a span/block directly, not wrapping MUI Typography
 const goldSx = {
   background: `linear-gradient(135deg, ${GOLD}, ${GOLD2}, ${AMBER})`,
   WebkitBackgroundClip: "text",
@@ -62,6 +63,17 @@ const goldSx = {
 //  SECTION 1 — HERO
 // ══════════════════════════════════════════════════════════════
 function HeroSection() {
+  const { addToCart } = useCart(); // 👈 get addToCart from context
+
+  // Product object for the MacBook Pro (matches cart structure)
+  const macbookProduct = {
+    id: 999,                      // unique ID
+    name: "MacBook Pro M3 Max",
+    category: "Laptops",
+    price: 2299,                  // USD equivalent of ₹1,89,900 (approx)
+    tag: "Bestseller",
+  };
+
   return (
     <Box
       id="home"
@@ -242,14 +254,21 @@ function HeroSection() {
                     ₹1,89,900
                   </Box>
                 </Box>
-                <Box component="button" onClick={() => {}} sx={{
-                  display: "inline-flex", alignItems: "center", gap: "8px",
-                  px: "22px", py: "12px", borderRadius: "6px",
-                  background: GOLD, color: INK, fontSize: 13, fontWeight: 700,
-                  border: "none", cursor: "pointer",
-                  transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)", whiteSpace: "nowrap",
-                  "&:hover": { background: GOLD2, transform: "scale(1.04)" },
-                }}>🛍 Add to Bag</Box>
+                {/* 👇 Updated button with onClick */}
+                <Box 
+                  component="button" 
+                  onClick={() => addToCart(macbookProduct)}
+                  sx={{
+                    display: "inline-flex", alignItems: "center", gap: "8px",
+                    px: "22px", py: "12px", borderRadius: "6px",
+                    background: GOLD, color: INK, fontSize: 13, fontWeight: 700,
+                    border: "none", cursor: "pointer",
+                    transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)", whiteSpace: "nowrap",
+                    "&:hover": { background: GOLD2, transform: "scale(1.04)" },
+                  }}
+                >
+                  🛍 Add to Bag
+                </Box>
               </Box>
             </Box>
 
@@ -342,9 +361,8 @@ function StatsSection() {
           gap: { xs: 0, sm: "48px" },
         }}>
           {STATS.map((stat, i) => (
-            <>
-              <Box key={stat.num} sx={{
-                // FIX: match HTML alignment — left / center / right per stat
+            <React.Fragment key={stat.num}>
+              <Box sx={{
                 textAlign: { xs: "left", sm: stat.align },
                 py: { xs: "28px", sm: 0 },
                 borderBottom: { xs: i < 2 ? `1px solid ${BORDER2}` : "none", sm: "none" },
@@ -352,7 +370,7 @@ function StatsSection() {
                 {/* Gold number — gradient applied directly, display:block so textAlign works */}
                 <Box component="span" sx={{
                   ...goldSx,
-                  display: "block",           // override inline-block so text-align is respected
+                  display: "block",
                   fontFamily: "'Playfair Display', serif",
                   fontSize: { xs: 46, sm: 48, md: 52 },
                   fontWeight: 900, lineHeight: 1, mb: "8px",
@@ -374,7 +392,7 @@ function StatsSection() {
                   width: "2px", height: 60, background: BORDER, mx: "auto",
                 }} />
               )}
-            </>
+            </React.Fragment>
           ))}
         </Box>
       </Container>
@@ -393,4 +411,4 @@ export default function Home() {
       <StatsSection />
     </Box>
   );
-}
+}  
