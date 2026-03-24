@@ -1,4 +1,4 @@
-  import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box, Typography, Button, TextField, Divider,
   Checkbox, FormControlLabel, IconButton,
@@ -482,7 +482,7 @@ export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose 
     <>
       <style>{globalStyles}</style>
       
-      {/* Modal overlay */}
+      {/* Modal overlay - NO BLUR, just dark overlay */}
       <Box
         onClick={(e) => { if (e.target === e.currentTarget && onClose) onClose(); }}
         sx={{
@@ -495,8 +495,8 @@ export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose 
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          bgcolor: 'rgba(0, 0, 0, 0.75)', 
-          backdropFilter: 'blur(12px)',     
+          bgcolor: 'rgba(0, 0, 0, 0.75)', // Dark semi-transparent background
+          // No backdropFilter - completely removed blur
           animation: 'fadeIn 0.25s ease',
           '@keyframes fadeIn': {
             from: { opacity: 0 },
