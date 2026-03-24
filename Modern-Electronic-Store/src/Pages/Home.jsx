@@ -72,8 +72,7 @@ function HeroSection() {
         alignItems: "center",
         position: "relative",
         overflow: "hidden",
-        // pt = navbar height only — no extra gap
-        pt: "80px",
+      
         background: `
           radial-gradient(ellipse 55% 65% at 80% 40%, rgba(232,160,32,.07) 0%, transparent 65%),
           radial-gradient(ellipse 40% 50% at 10% 70%, rgba(196,74,26,.06) 0%, transparent 70%),

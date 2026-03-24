@@ -68,6 +68,7 @@ const NAV_LINKS = [
   { label: "Products", href: "#products", icon: <Inventory2OutlinedIcon />  },
   { label: "Services", href: "#services", icon: <BuildOutlinedIcon />       },
   { label: "Contact",  href: "#contact",  icon: <MailOutlineIcon />         },
+  
 ];
 
 // ══════════════════════════════════════════════════════════

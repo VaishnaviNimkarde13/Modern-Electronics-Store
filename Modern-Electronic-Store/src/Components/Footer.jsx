@@ -12,9 +12,7 @@ import {
 import { createTheme, ThemeProvider, alpha } from "@mui/material/styles";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import YouTubeIcon from "@mui/icons-material/YouTube";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import TwitterIcon from "@mui/icons-material/Twitter";
 
 // ── Theme ──────────────────────────────────────────────────────────────
 const theme = createTheme({
@@ -50,27 +48,30 @@ const BORDER2 = `rgba(240,235,224,0.08)`;
 const SOCIAL = [
   { icon: <InstagramIcon fontSize="small" />, label: "Instagram" },
   { icon: <FacebookIcon fontSize="small" />, label: "Facebook" },
-  { icon: <YouTubeIcon fontSize="small" />, label: "YouTube" },
   { icon: <WhatsAppIcon fontSize="small" />, label: "WhatsApp" },
-  { icon: <TwitterIcon fontSize="small" />, label: "Twitter" },
 ];
 
 const LINKS = [
   {
     heading: "Products",
-    items: ["Laptops", "Desktop PCs", "Mobile Phones", "Bluetooth Devices", "Accessories"],
+    items: [
+      "Laptops",
+      "Desktop PCs",
+      "Mobile Phones",
+      "Bluetooth Devices",
+      "Accessories",
+    ],
   },
   {
     heading: "Services",
-    items: ["Laptop Repair", "PC Repair", "Mobile Repair", "Data Recovery", "Home Visit"],
-  },
-  {
-    heading: "Company",
-    items: ["About Us", "Careers", "Blog", "Privacy Policy", "Warranty Policy"],
+    items: [
+      "Laptop Repair",
+      "PC Repair",
+      "Mobile Repair",
+     
+    ],
   },
 ];
-
-const PAYMENTS = ["VISA", "MC", "UPI", "GPay", "PhonePe"];
 
 // ── Sub-components ─────────────────────────────────────────────────────
 
@@ -139,6 +140,9 @@ function SocialButton({ icon, label }) {
   );
 }
 
+
+// ── Main Footer ────────────────────────────────────────────────────────
+
 function FooterColumn({ heading, items }) {
   return (
     <Box>
@@ -153,69 +157,63 @@ function FooterColumn({ heading, items }) {
       >
         {heading}
       </Typography>
-      <Stack spacing={1.5} component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
-        {items.map((item) => (
-          <Box component="li" key={item}>
-            <Link
-              href="#"
-              underline="none"
-              sx={{
-                fontSize: 14,
-                color: MUTED,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
-                position: "relative",
-                pl: 0,
-                "&::before": {
-                  content: '""',
-                  display: "inline-block",
-                  width: 0,
-                  height: "1px",
-                  background: GOLD,
-                  transition: "width 0.3s ease",
-                  flexShrink: 0,
-                },
-                "&:hover": {
-                  color: "#f0ebe0",
-                  pl: "6px",
-                  "&::before": { width: "12px" },
-                },
-              }}
-            >
-              {item}
-            </Link>
-          </Box>
-        ))}
+
+      <Stack
+        spacing={1.5}
+        component="ul"
+        sx={{ listStyle: "none", p: 0, m: 0 }}
+      >
+        {items.map((item) => {
+          // 👉 condition for services
+          const link =
+            heading === "Services" ? "#services" : "#";
+
+          return (
+            <Box component="li" key={item}>
+              <Link
+                href={link}
+                underline="none"
+                sx={{
+                  fontSize: 14,
+                  color: MUTED,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
+                  position: "relative",
+
+                  // ✅ FIX hover shift issue
+                  transform: "translateX(0)",
+
+                  "&::before": {
+                    content: '""',
+                    display: "inline-block",
+                    width: 0,
+                    height: "1px",
+                    background: GOLD,
+                    transition: "width 0.3s ease",
+                    flexShrink: 0,
+                  },
+
+                  "&:hover": {
+                    color: "#f0ebe0",
+                    transform: "translateX(6px)", // 🔥 instead of padding
+                    "&::before": { width: "12px" },
+                  },
+                }}
+              >
+                {item}
+              </Link>
+            </Box>
+          );
+        })}
       </Stack>
     </Box>
   );
 }
 
-function PaymentChip({ label }) {
-  return (
-    <Box
-      component="span"
-      sx={{
-        background: INK3,
-        border: `1px solid ${BORDER2}`,
-        px: 1.5,
-        py: 0.5,
-        borderRadius: "4px",
-        fontSize: 11,
-        fontWeight: 700,
-        color: MUTED2,
-        letterSpacing: "0.5px",
-        fontFamily: "'Outfit', sans-serif",
-      }}
-    >
-      {label}
-    </Box>
-  );
-}
 
-// ── Main Footer ────────────────────────────────────────────────────────
+
 export default function Footer() {
   return (
     <ThemeProvider theme={theme}>
@@ -230,11 +228,10 @@ export default function Footer() {
         }}
       >
         <Container maxWidth="xl" sx={{ px: { xs: 2.5, sm: 4 } }}>
-
           {/* ── Main grid ── */}
           <Grid
             container
-            spacing={{ xs: 5, md: 6 }}
+            spacing={{ xs: 5, md: 25 }}
             sx={{ mb: { xs: 5, md: 7 } }}
           >
             {/* Brand column */}
@@ -262,7 +259,15 @@ export default function Footer() {
 
             {/* Link columns */}
             {LINKS.map((col) => (
-              <Grid item xs={6} sm={6} md={4} lg={3} key={col.heading}>
+              <Grid
+                item
+                xs={6}
+                sm={6}
+                md={4}
+                lg={3}
+                key={col.heading}
+                sx={{ minWidth: 200 }} // prevents shrinking/jumping
+              >
                 <FooterColumn {...col} />
               </Grid>
             ))}
@@ -280,13 +285,7 @@ export default function Footer() {
               © 2025 NEXVOLT. All rights reserved. Crafted with ❤️ in Pune,
               India.
             </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              {PAYMENTS.map((p) => (
-                <PaymentChip key={p} label={p} />
-              ))}
-            </Stack>
           </Stack>
-
         </Container>
       </Box>
     </ThemeProvider>
