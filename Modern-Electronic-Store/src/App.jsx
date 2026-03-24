@@ -14,7 +14,6 @@ function MainPage() {
       <div id="home" style={{ paddingTop: "80px" }}>
         <Home />
       </div>
-      {/* <div id="products" style={{ paddingTop: "80px" }}> ... </div> */}
       <div id="services" style={{ paddingTop: "80px" }}>
         <Services />
       </div>

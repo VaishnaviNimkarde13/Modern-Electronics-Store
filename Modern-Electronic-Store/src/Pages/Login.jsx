@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+  import React, { useState } from 'react';
 import {
   Box, Typography, Button, TextField, Divider,
   Checkbox, FormControlLabel, IconButton,
@@ -44,8 +44,8 @@ const globalStyles = `
   }
   @keyframes scaleIn     { from { opacity:0; transform:scale(0.94); }      to { opacity:1; transform:scale(1); }    }
   @keyframes fadeSlideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn      { from { opacity:0; } to { opacity:1; } }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #111010; overflow-y: auto; }
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: #111010; }
   ::-webkit-scrollbar-thumb { background: #e8a020; border-radius: 3px; }
@@ -405,15 +405,8 @@ export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose 
   const isLogin = tab === 'login';
   const isSignup = tab === 'signup';
 
-  // If this is being used as a modal and isOpen is false, don't render
-  if (onClose && !isOpen) return null;
-
-  // Handle modal close
-  const handleModalClose = (e) => {
-    if (e.target === e.currentTarget && onClose) {
-      onClose();
-    }
-  };
+  // If modal is closed, don't render anything
+  if (!isOpen) return null;
 
   // Helper function to render the auth content (card + forms)
   const renderAuthContent = () => {
@@ -423,10 +416,31 @@ export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose 
         border: '1.5px solid rgba(232,160,32,0.18)',
         bgcolor: C.card,
         p: { xs: '24px 20px', sm: '32px' },
-        boxShadow: '0 24px 80px rgba(0,0,0,0.55)',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.65)',
         animation: 'scaleIn 0.35s ease',
         transition: 'all 0.3s ease',
+        position: 'relative',
       }}>
+        {/* Close button for modal */}
+        {onClose && (
+          <IconButton
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              top: 12,
+              right: 12,
+              zIndex: 10,
+              color: C.muted2,
+              '&:hover': {
+                color: C.gold,
+                bgcolor: 'rgba(232,160,32,0.1)',
+              },
+            }}
+          >
+            <CloseIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+        )}
+        
         {/* Logo */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.2, mb: 2.5 }}>
           <Box sx={{ width: 38, height: 38, borderRadius: '10px', background: `linear-gradient(135deg, ${C.goldD}, ${C.gold})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(232,160,32,0.40)' }}>
@@ -460,16 +474,6 @@ export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose 
           ? <LoginForm onSwitch={() => setTab('signup')} />
           : <SignupForm onSwitch={() => setTab('login')} />
         }
-
-        {/* Only show back button in full page mode */}
-        {!onClose && (
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Button href="/" startIcon={<ArrowBackIcon sx={{ fontSize: '14px !important' }} />}
-              sx={{ color: C.muted2, fontSize: 12, fontWeight: 500, textTransform: 'none', fontFamily: '"Plus Jakarta Sans", sans-serif', '&:hover': { color: C.gold, bgcolor: 'transparent' } }}>
-              Back to Home
-            </Button>
-          </Box>
-        )}
       </Paper>
     );
   };
@@ -477,87 +481,42 @@ export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose 
   return (
     <>
       <style>{globalStyles}</style>
-
-      {/* If onClose exists, render as modal, otherwise render as full page */}
-      {onClose ? (
-        // Modal version
-        <Box
-          onClick={handleModalClose}
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: 'rgba(0, 0, 0, 0.85)',
-            backdropFilter: 'blur(8px)',
-            animation: 'fadeIn 0.2s ease',
-            '@keyframes fadeIn': {
-              from: { opacity: 0 },
-              to: { opacity: 1 }
-            }
-          }}
-        >
-          <Box sx={{
-            position: 'relative',
-            maxWidth: isSignup ? '500px' : '450px',
-            width: '90%',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            '&::-webkit-scrollbar': { width: '4px' },
-            '&::-webkit-scrollbar-track': { background: '#1e1c1a' },
-            '&::-webkit-scrollbar-thumb': { background: '#e8a020', borderRadius: '2px' },
-          }}>
-            {/* Modal content with close button */}
-            <Box sx={{ position: 'relative' }}>
-              <IconButton
-                onClick={onClose}
-                sx={{
-                  position: 'absolute',
-                  top: 16,
-                  right: 16,
-                  zIndex: 10,
-                  bgcolor: 'rgba(0,0,0,0.5)',
-                  color: '#f0ebe0',
-                  '&:hover': {
-                    bgcolor: 'rgba(232,160,32,0.2)',
-                    color: '#e8a020'
-                  }
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-              {renderAuthContent()}
-            </Box>
-          </Box>
-        </Box>
-      ) : (
-        // Full page version (original)
-        <Box sx={{
-          minHeight: '100vh',
+      
+      {/* Modal overlay */}
+      <Box
+        onClick={(e) => { if (e.target === e.currentTarget && onClose) onClose(); }}
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          bgcolor: C.bg,
+          bgcolor: 'rgba(0, 0, 0, 0.75)', 
+          backdropFilter: 'blur(12px)',     
+          animation: 'fadeIn 0.25s ease',
+          '@keyframes fadeIn': {
+            from: { opacity: 0 },
+            to: { opacity: 1 }
+          }
+        }}
+      >
+        <Box sx={{
           position: 'relative',
-          overflow: 'hidden',
-          fontFamily: '"Plus Jakarta Sans", sans-serif',
-          py: 4,
+          maxWidth: isSignup ? '500px' : '450px',
+          width: '90%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          '&::-webkit-scrollbar': { width: '4px' },
+          '&::-webkit-scrollbar-track': { background: '#1e1c1a' },
+          '&::-webkit-scrollbar-thumb': { background: '#e8a020', borderRadius: '2px' },
         }}>
-          {/* Original blob and background effects */}
-          <Box sx={{ position: 'absolute', width: 480, height: 480, top: -120, right: -120, background: 'rgba(232,160,32,0.06)', filter: 'blur(70px)', animation: 'blobMove 10s ease-in-out infinite', borderRadius: '60% 40% 30% 70%/60% 30% 70% 40%', pointerEvents: 'none', zIndex: 0 }} />
-          <Box sx={{ position: 'absolute', width: 340, height: 340, bottom: -80, left: -80, background: 'rgba(196,74,26,0.05)', filter: 'blur(70px)', animation: 'blobMove 10s 3s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
-          <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', backgroundImage: 'radial-gradient(circle, rgba(232,160,32,0.07) 1px, transparent 1px)', backgroundSize: '38px 38px' }} />
-          
-          <Container maxWidth={isSignup ? 'sm' : 'xs'} sx={{ position: 'relative', zIndex: 1 }}>
-            {renderAuthContent()}
-          </Container>
+          {renderAuthContent()}
         </Box>
-      )}
+      </Box>
     </>
   );
 }

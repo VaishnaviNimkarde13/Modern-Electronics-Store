@@ -39,8 +39,8 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import AddShoppingCartIcon       from "@mui/icons-material/AddShoppingCart";
 import CheckCircleOutlineIcon    from "@mui/icons-material/CheckCircleOutline";
 import BoltIcon                  from "@mui/icons-material/Bolt";
-// import AuthPage                  from "./login"; // Import the AuthPage component
 import AuthPage from "../Pages/Login";
+
 // ══════════════════════════════════════════════════════════
 //  THEME
 // ══════════════════════════════════════════════════════════
@@ -632,13 +632,13 @@ function NavbarInner() {
   const [drawerOpen, setDrawerOpen]   = useState(false);
   const [searchOpen, setSearchOpen]   = useState(false);
   const [cartOpen, setCartOpen]       = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false); // ADDED: State for login modal
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [activeLink, setActiveLink]   = useState("home");
   const [toast, setToast]             = useState({ open: false, name: "" });
   const navigate = useNavigate();
   const stuck = useScrollTrigger({ disableHysteresis: true, threshold: 60 });
 
-const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
+  const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
   const cartCount = cartItems.length;
 
   const handleAddToCart = (product) => {
@@ -646,16 +646,15 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
     setToast({ open: true, name: product.name });
   };
 
-
   const handleRemoveFromCart = (id) => {
     removeFromCart(id);
   };
-   const handleCheckout = () => {
-  clearCart();        
-  setCartOpen(false);    
-  setToast({ open: true, name: "Order placed successfully!" });
-
-};
+  
+  const handleCheckout = () => {
+    clearCart();        
+    setCartOpen(false);    
+    setToast({ open: true, name: "Order placed successfully!" });
+  };
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") setSearchOpen(false); };
@@ -683,9 +682,7 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
 
   return (
     <>
-      {/* ────────────────────────────
-          SEARCH OVERLAY
-      ──────────────────────────── */}
+      {/* SEARCH OVERLAY */}
       <SearchOverlay
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
@@ -693,29 +690,23 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
         cartItems={cartItems}
       />
 
-      {/* ────────────────────────────
-          CART DRAWER
-      ──────────────────────────── */}
-    <CartDrawer
-  open={cartOpen}
-  onClose={() => setCartOpen(false)}
-  cartItems={cartItems}
-  onRemove={handleRemoveFromCart}
-  onCheckout={handleCheckout}  
-/>
+      {/* CART DRAWER */}
+      <CartDrawer
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        cartItems={cartItems}
+        onRemove={handleRemoveFromCart}
+        onCheckout={handleCheckout}  
+      />
 
-      {/* ────────────────────────────
-          LOGIN MODAL - ADDED
-      ──────────────────────────── */}
+      {/* LOGIN MODAL */}
       <AuthPage
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
         defaultTab="login"
       />
 
-      {/* ────────────────────────────
-          TOAST
-      ──────────────────────────── */}
+      {/* TOAST */}
       <Snackbar
         open={toast.open}
         autoHideDuration={2500}
@@ -739,9 +730,7 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
         </Alert>
       </Snackbar>
 
-      {/* ────────────────────────────
-          APP BAR
-      ──────────────────────────── */}
+      {/* APP BAR */}
       <AppBar
         position="fixed"
         elevation={0}
@@ -811,14 +800,14 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
                 <SearchIcon sx={{ fontSize: 18 }} />
               </NavIconBtn>
 
-              {/* Cart icon — hidden on xs */}
+              {/* Cart icon */}
               <Box sx={{ display: { xs: "none", sm: "flex" } }}>
                 <NavIconBtn badgeCount={cartCount} onClick={() => setCartOpen(true)}>
                   <ShoppingBagOutlinedIcon sx={{ fontSize: 18 }} />
                 </NavIconBtn>
               </Box>
 
-              {/* UPDATED: Account button - opens modal instead of navigate */}
+              {/* Account button - opens modal */}
               <Button
                 onClick={() => setLoginModalOpen(true)}
                 startIcon={<PersonOutlineIcon />}
@@ -843,7 +832,7 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
                 Account
               </Button>
 
-              {/* Burger — mobile only */}
+              {/* Burger menu */}
               <IconButton
                 onClick={() => setDrawerOpen(true)}
                 size="small"
@@ -866,9 +855,7 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
         </Container>
       </AppBar>
 
-      {/* ────────────────────────────
-          MOBILE DRAWER
-      ──────────────────────────── */}
+      {/* MOBILE DRAWER */}
       <Drawer
         anchor="right"
         open={drawerOpen}
@@ -970,7 +957,7 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
 
         <Divider sx={{ borderColor: BORDER2, mx: 2 }} />
 
-        {/* Drawer bottom — cart row + account button */}
+        {/* Drawer bottom */}
         <Box sx={{ px: 2, py: 3, display: "flex", flexDirection: "column", gap: 1.5 }}>
           <Stack
             direction="row"
@@ -1011,7 +998,7 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
             </Box>
           </Stack>
 
-          {/* UPDATED: Account button in mobile drawer - opens modal */}
+          {/* Account button in mobile drawer - opens modal */}
           <Button
             fullWidth
             startIcon={<AccountCircleOutlinedIcon />}
@@ -1039,14 +1026,14 @@ const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
         </Box>
       </Drawer>
 
-      {/* Spacer so content clears the fixed AppBar */}
+      {/* Spacer */}
       <Toolbar sx={{ minHeight: { xs: "64px !important", md: "80px !important" } }} />
     </>
   );
 }
 
 // ══════════════════════════════════════════════════════════
-//  DEFAULT EXPORT — wraps with ThemeProvider + global styles
+//  DEFAULT EXPORT
 // ══════════════════════════════════════════════════════════
 export default function Navbar() {
   return (
