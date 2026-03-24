@@ -12,7 +12,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { keyframes, margin } from "@mui/system";
+import { keyframes } from "@mui/system";
 import PlaceIcon        from "@mui/icons-material/Place";
 import PhoneIcon        from "@mui/icons-material/Phone";
 import EmailIcon        from "@mui/icons-material/Email";
@@ -198,8 +198,7 @@ export default function Contact() {
         background: INK2,               // .contact  →  background:var(--ink2)
       }}
     >
-      <Container maxWidth="xl" sx={{ px: { xs: 2.5, sm: 3, md: 4 } }}>
-
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
         {/* ── Section header ── */}
         <Eyebrow>Get In Touch</Eyebrow>
 
@@ -219,41 +218,25 @@ export default function Contact() {
         </Typography>
 
         {/* ── Two-column grid (.ct-grid) ── */}
-        {/* HTML: grid-template-columns:1fr 1.4fr; gap:64px */}
-        {/* <Grid
-          container
-          spacing={{ xs: 5, md: 8 }}
-          alignItems="flex-start"
-          sx={{ mt: { xs: 4, md: 7.5 }  }}
-          
-          
-        > */}
-
         <Grid
-  container
-  spacing={{ xs: 5, md: 8 }}
-  alignItems="flex-start"
-  sx={{ 
-    mt: { xs: 4, md: 7.5 },
-    ml: "60px"   
-  }}
->
-
+          container
+          spacing={{ xs: 4, md: 6 }}
+          alignItems="flex-start"
+          sx={{ mt: { xs: 4, md: 7.5 } }}   // removed hardcoded margin-left
+        >
           {/* ════════════════════════════════
               LEFT — Info cards (.ct-info)
           ════════════════════════════════ */}
           <Grid item xs={12} md={5}>
             <Stack spacing={2.5}>
-
               {INFO_CARDS.map(({ Icon, label, value }, i) => (
                 <Box
                   key={label}
                   sx={{
-                    /* .ct-card */
                     background: INK,
                     border: `1px solid ${BORDER2}`,
                     borderRadius: R,
-                    p: "22px 24px",
+                    p: { xs: "18px 20px", sm: "22px 24px" },
                     display: "flex",
                     alignItems: "flex-start",
                     gap: "18px",
@@ -268,9 +251,9 @@ export default function Contact() {
                   {/* .ct-ico */}
                   <Box
                     sx={{
-                      width: 46,
-                      height: 46,
-                      minWidth: 46,
+                      width: { xs: 40, sm: 46 },
+                      height: { xs: 40, sm: 46 },
+                      minWidth: { xs: 40, sm: 46 },
                       borderRadius: "10px",
                       background: "rgba(232,160,32,.1)",
                       border: `1px solid ${BORDER}`,
@@ -280,11 +263,10 @@ export default function Contact() {
                       color: GOLD,
                     }}
                   >
-                    <Icon sx={{ fontSize: 18 }} />
+                    <Icon sx={{ fontSize: { xs: 16, sm: 18 } }} />
                   </Box>
 
                   <Box>
-                    {/* .ct-lbl */}
                     <Typography
                       sx={{
                         fontSize: 11,
@@ -296,10 +278,9 @@ export default function Contact() {
                     >
                       {label}
                     </Typography>
-                    {/* .ct-val */}
                     <Typography
                       sx={{
-                        fontSize: 15,
+                        fontSize: { xs: 13, sm: 15 },
                         fontWeight: 600,
                         color: TEXT,
                         lineHeight: 1.5,
@@ -318,7 +299,7 @@ export default function Contact() {
                   background: INK,
                   border: `1px solid ${BORDER2}`,
                   borderRadius: R,
-                  height: 180,
+                  height: { xs: 160, sm: 180 },
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -326,13 +307,14 @@ export default function Contact() {
                   gap: 1,
                   color: MUTED,
                   animation: `${fadeUp} .7s .32s ease both`,
+                  p: 2,
                 }}
               >
-                <MapIcon sx={{ fontSize: 32, color: GOLD }} />
-                <Typography sx={{ fontWeight: 600, fontSize: 14, color: MUTED }}>
+                <MapIcon sx={{ fontSize: { xs: 28, sm: 32 }, color: GOLD }} />
+                <Typography sx={{ fontWeight: 600, fontSize: { xs: 13, sm: 14 }, color: MUTED, textAlign: "center" }}>
                   Pimpri-Chinchwad, Pune
                 </Typography>
-                <Typography sx={{ fontSize: 12, color: MUTED2 }}>
+                <Typography sx={{ fontSize: { xs: 11, sm: 12 }, color: MUTED2, textAlign: "center" }}>
                   📍 Sector 27, Pradhikaran
                 </Typography>
               </Box>
@@ -345,19 +327,17 @@ export default function Contact() {
           <Grid item xs={12} md={7}>
             <Box
               sx={{
-                /* .ct-form */
                 background: INK,
                 border: `1px solid ${BORDER2}`,
                 borderRadius: R2,
-                p: { xs: 3, sm: 5.5 },
+                p: { xs: 2.5, sm: 4, md: 5.5 },
                 animation: `${fadeUp} .7s .1s ease both`,
               }}
             >
-              {/* .ct-form-title */}
               <Typography
                 sx={{
                   fontFamily: "'Playfair Display', serif",
-                  fontSize: 26,
+                  fontSize: { xs: 24, sm: 26 },
                   fontWeight: 800,
                   color: TEXT,
                   mb: 1,
@@ -366,12 +346,11 @@ export default function Contact() {
                 Send a Message
               </Typography>
 
-              {/* .ct-form-sub */}
               <Typography
                 sx={{
-                  fontSize: 14,
+                  fontSize: { xs: 13, sm: 14 },
                   color: MUTED,
-                  mb: 4,
+                  mb: 3,
                 }}
               >
                 We reply within 24 hours — usually much faster.
@@ -499,11 +478,11 @@ export default function Contact() {
                 onClick={handleSubmit}
                 startIcon={<SendIcon />}
                 sx={{
-                  py: 2,
+                  py: { xs: 1.75, sm: 2 },
                   borderRadius: R,
                   background: GOLD,
                   color: INK,
-                  fontSize: 14,
+                  fontSize: { xs: 13, sm: 14 },
                   fontWeight: 700,
                   letterSpacing: "1px",
                   textTransform: "uppercase",
