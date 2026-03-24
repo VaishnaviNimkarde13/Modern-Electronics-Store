@@ -405,10 +405,8 @@ export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose 
   const isLogin = tab === 'login';
   const isSignup = tab === 'signup';
 
-  // If modal is closed, don't render anything
   if (!isOpen) return null;
 
-  // Helper function to render the auth content (card + forms)
   const renderAuthContent = () => {
     return (
       <Paper elevation={0} sx={{
