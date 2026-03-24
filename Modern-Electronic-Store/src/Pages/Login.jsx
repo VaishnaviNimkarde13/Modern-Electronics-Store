@@ -17,7 +17,7 @@ import PhoneOutlinedIcon        from '@mui/icons-material/PhoneOutlined';
 import CheckCircleIcon          from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import ArrowBackIcon            from '@mui/icons-material/ArrowBack';
-
+import CloseIcon                from '@mui/icons-material/Close';
 
 const C = {
   bg:       '#111010',
@@ -128,7 +128,6 @@ function SocialBtn({ icon, label }) {
   );
 }
 
-
 function LoginForm({ onSwitch }) {
   const [showPwd,  setShowPwd]  = useState(false);
   const [remember, setRemember] = useState(false);
@@ -216,7 +215,6 @@ function LoginForm({ onSwitch }) {
     </Box>
   );
 }
-
 
 function SignupForm({ onSwitch }) {
   const [showPwd,  setShowPwd]  = useState(false);
@@ -402,87 +400,164 @@ function SignupForm({ onSwitch }) {
   );
 }
 
-
-export default function AuthPage({ defaultTab = 'login' }) {
+export default function AuthPage({ defaultTab = 'login', isOpen = true, onClose = null }) {
   const [tab, setTab] = useState(defaultTab);
-  const isLogin  = tab === 'login';
+  const isLogin = tab === 'login';
   const isSignup = tab === 'signup';
 
-  return (
-    <>
-      <style>{globalStyles}</style>
+  // If this is being used as a modal and isOpen is false, don't render
+  if (onClose && !isOpen) return null;
 
-      <Box sx={{
-        minHeight: '100vh',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        bgcolor: C.bg, position: 'relative', overflow: 'hidden',
-        fontFamily: '"Plus Jakarta Sans", sans-serif', py: 4,
+  // Handle modal close
+  const handleModalClose = (e) => {
+    if (e.target === e.currentTarget && onClose) {
+      onClose();
+    }
+  };
+
+  // Helper function to render the auth content (card + forms)
+  const renderAuthContent = () => {
+    return (
+      <Paper elevation={0} sx={{
+        borderRadius: '24px',
+        border: '1.5px solid rgba(232,160,32,0.18)',
+        bgcolor: C.card,
+        p: { xs: '24px 20px', sm: '32px' },
+        boxShadow: '0 24px 80px rgba(0,0,0,0.55)',
+        animation: 'scaleIn 0.35s ease',
+        transition: 'all 0.3s ease',
       }}>
+        {/* Logo */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.2, mb: 2.5 }}>
+          <Box sx={{ width: 38, height: 38, borderRadius: '10px', background: `linear-gradient(135deg, ${C.goldD}, ${C.gold})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(232,160,32,0.40)' }}>
+            <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 18, color: '#0e0d0b' }}>V</Typography>
+          </Box>
+          <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 800, fontSize: 20, letterSpacing: 2, color: C.text }}>
+            VOLT<span style={{ color: C.gold }}>EX</span>
+          </Typography>
+        </Box>
 
-        {/* Amber glow blobs */}
-        <Box sx={{ position: 'absolute', width: 480, height: 480, top: -120, right: -120, background: 'rgba(232,160,32,0.06)', filter: 'blur(70px)', animation: 'blobMove 10s ease-in-out infinite', borderRadius: '60% 40% 30% 70%/60% 30% 70% 40%', pointerEvents: 'none', zIndex: 0 }} />
-        <Box sx={{ position: 'absolute', width: 340, height: 340, bottom: -80, left: -80, background: 'rgba(196,74,26,0.05)', filter: 'blur(70px)', animation: 'blobMove 10s 3s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
+        {/* Heading */}
+        <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 28, color: C.text, textAlign: 'center', mb: 0.5, letterSpacing: '-0.5px' }}>
+          {isLogin ? 'Welcome Back' : 'Create Account'}
+        </Typography>
+        <Typography sx={{ fontSize: 13, color: C.muted, textAlign: 'center', mb: 2.5 }}>
+          {isLogin ? 'Sign in to your account' : 'Join 12,000+ happy VOLTEX customers'}
+        </Typography>
 
-        {/* Dot grid */}
-        <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', backgroundImage: 'radial-gradient(circle, rgba(232,160,32,0.07) 1px, transparent 1px)', backgroundSize: '38px 38px' }} />
+        {/* Tab switcher */}
+        <Box sx={{ display: 'flex', bgcolor: 'rgba(255,255,255,0.05)', borderRadius: '12px', p: '4px', border: '1.5px solid rgba(255,255,255,0.08)', mb: 2.5, gap: '4px' }}>
+          <Box onClick={() => setTab('login')} sx={{ flex: 1, py: 1, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isLogin ? C.gold : 'transparent', boxShadow: isLogin ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isLogin ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 700, color: isLogin ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Sign In</Typography>
+          </Box>
+          <Box onClick={() => setTab('signup')} sx={{ flex: 1, py: 1, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isSignup ? C.gold : 'transparent', boxShadow: isSignup ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isSignup ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 700, color: isSignup ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Create Account</Typography>
+          </Box>
+        </Box>
 
-        <Container maxWidth={isSignup ? 'sm' : 'xs'} sx={{ position: 'relative', zIndex: 1 }}>
+        {/* Render active form */}
+        {isLogin
+          ? <LoginForm onSwitch={() => setTab('signup')} />
+          : <SignupForm onSwitch={() => setTab('login')} />
+        }
 
-          {/* ── Card ── */}
-          <Paper elevation={0} sx={{
-            borderRadius: '24px',
-            border: '1.5px solid rgba(232,160,32,0.18)',
-            bgcolor: C.card,
-            p: { xs: '24px 20px', sm: '32px' },
-            boxShadow: '0 24px 80px rgba(0,0,0,0.55)',
-            animation: 'scaleIn 0.35s ease',
-            transition: 'all 0.3s ease',
-          }}>
-
-            {/* Logo */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.2, mb: 2.5 }}>
-              <Box sx={{ width: 38, height: 38, borderRadius: '10px', background: `linear-gradient(135deg, ${C.goldD}, ${C.gold})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(232,160,32,0.40)' }}>
-                <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 18, color: '#0e0d0b' }}>V</Typography>
-              </Box>
-              <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 800, fontSize: 20, letterSpacing: 2, color: C.text }}>
-                VOLT<span style={{ color: C.gold }}>EX</span>
-              </Typography>
-            </Box>
-
-            {/* Heading */}
-            <Typography sx={{ fontFamily: '"Fraunces", serif', fontWeight: 900, fontSize: 28, color: C.text, textAlign: 'center', mb: 0.5, letterSpacing: '-0.5px' }}>
-              {isLogin ? 'Welcome Back' : 'Create Account'}
-            </Typography>
-            <Typography sx={{ fontSize: 13, color: C.muted, textAlign: 'center', mb: 2.5 }}>
-              {isLogin ? 'Sign in to your account' : 'Join 12,000+ happy VOLTEX customers'}
-            </Typography>
-
-            {/* Tab switcher — dark pill style matching screenshot */}
-            <Box sx={{ display: 'flex', bgcolor: 'rgba(255,255,255,0.05)', borderRadius: '12px', p: '4px', border: '1.5px solid rgba(255,255,255,0.08)', mb: 2.5, gap: '4px' }}>
-              <Box onClick={() => setTab('login')} sx={{ flex: 1, py: 1, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isLogin ? C.gold : 'transparent', boxShadow: isLogin ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isLogin ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
-                <Typography sx={{ fontSize: 12, fontWeight: 700, color: isLogin ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Sign In</Typography>
-              </Box>
-              <Box onClick={() => setTab('signup')} sx={{ flex: 1, py: 1, borderRadius: '9px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.25s ease', bgcolor: isSignup ? C.gold : 'transparent', boxShadow: isSignup ? '0 4px 12px rgba(232,160,32,0.35)' : 'none', '&:hover': !isSignup ? { bgcolor: 'rgba(255,255,255,0.06)' } : {} }}>
-                <Typography sx={{ fontSize: 12, fontWeight: 700, color: isSignup ? '#0e0d0b' : C.muted, fontFamily: '"Plus Jakarta Sans", sans-serif', transition: 'color 0.25s' }}>Create Account</Typography>
-              </Box>
-            </Box>
-
-            {/* Render active form */}
-            {isLogin
-              ? <LoginForm  onSwitch={() => setTab('signup')} />
-              : <SignupForm onSwitch={() => setTab('login')}  />
-            }
-          </Paper>
-
-          {/* Back to home */}
+        {/* Only show back button in full page mode */}
+        {!onClose && (
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Button href="/" startIcon={<ArrowBackIcon sx={{ fontSize: '14px !important' }} />}
               sx={{ color: C.muted2, fontSize: 12, fontWeight: 500, textTransform: 'none', fontFamily: '"Plus Jakarta Sans", sans-serif', '&:hover': { color: C.gold, bgcolor: 'transparent' } }}>
               Back to Home
             </Button>
           </Box>
-        </Container>
-      </Box>
+        )}
+      </Paper>
+    );
+  };
+
+  return (
+    <>
+      <style>{globalStyles}</style>
+
+      {/* If onClose exists, render as modal, otherwise render as full page */}
+      {onClose ? (
+        // Modal version
+        <Box
+          onClick={handleModalClose}
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(8px)',
+            animation: 'fadeIn 0.2s ease',
+            '@keyframes fadeIn': {
+              from: { opacity: 0 },
+              to: { opacity: 1 }
+            }
+          }}
+        >
+          <Box sx={{
+            position: 'relative',
+            maxWidth: isSignup ? '500px' : '450px',
+            width: '90%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            '&::-webkit-scrollbar': { width: '4px' },
+            '&::-webkit-scrollbar-track': { background: '#1e1c1a' },
+            '&::-webkit-scrollbar-thumb': { background: '#e8a020', borderRadius: '2px' },
+          }}>
+            {/* Modal content with close button */}
+            <Box sx={{ position: 'relative' }}>
+              <IconButton
+                onClick={onClose}
+                sx={{
+                  position: 'absolute',
+                  top: 16,
+                  right: 16,
+                  zIndex: 10,
+                  bgcolor: 'rgba(0,0,0,0.5)',
+                  color: '#f0ebe0',
+                  '&:hover': {
+                    bgcolor: 'rgba(232,160,32,0.2)',
+                    color: '#e8a020'
+                  }
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+              {renderAuthContent()}
+            </Box>
+          </Box>
+        </Box>
+      ) : (
+        // Full page version (original)
+        <Box sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: C.bg,
+          position: 'relative',
+          overflow: 'hidden',
+          fontFamily: '"Plus Jakarta Sans", sans-serif',
+          py: 4,
+        }}>
+          {/* Original blob and background effects */}
+          <Box sx={{ position: 'absolute', width: 480, height: 480, top: -120, right: -120, background: 'rgba(232,160,32,0.06)', filter: 'blur(70px)', animation: 'blobMove 10s ease-in-out infinite', borderRadius: '60% 40% 30% 70%/60% 30% 70% 40%', pointerEvents: 'none', zIndex: 0 }} />
+          <Box sx={{ position: 'absolute', width: 340, height: 340, bottom: -80, left: -80, background: 'rgba(196,74,26,0.05)', filter: 'blur(70px)', animation: 'blobMove 10s 3s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
+          <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', backgroundImage: 'radial-gradient(circle, rgba(232,160,32,0.07) 1px, transparent 1px)', backgroundSize: '38px 38px' }} />
+          
+          <Container maxWidth={isSignup ? 'sm' : 'xs'} sx={{ position: 'relative', zIndex: 1 }}>
+            {renderAuthContent()}
+          </Container>
+        </Box>
+      )}
     </>
   );
 }
