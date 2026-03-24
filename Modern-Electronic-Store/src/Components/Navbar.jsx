@@ -67,7 +67,7 @@ const NAV_LINKS = [
   { label: "Home",     href: "#home",     icon: <HomeOutlinedIcon />        },
   { label: "Products", href: "#products", icon: <Inventory2OutlinedIcon />  },
   { label: "Services", href: "#services", icon: <BuildOutlinedIcon />       },
-  { label: "Contact",  href: "contact",  icon: <MailOutlineIcon />         },
+  { label: "Contact",  href: "#contact",  icon: <MailOutlineIcon />         },
 ];
 
 // ══════════════════════════════════════════════════════════

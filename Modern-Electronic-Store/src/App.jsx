@@ -3,6 +3,7 @@ import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
 import Services from "./Pages/Services";
+import Contact from "./Pages/Contact";
 import AuthPage from "./Pages/Login";
 
 function MainPage() {
@@ -16,6 +17,9 @@ function MainPage() {
 
       <div id="services" style={{ paddingTop: "80px" }}>
         <Services />
+      </div>
+      <div id="contact" style={{ paddingTop: "80px" }}>
+        <Contact />
       </div>
 
       <Footer />
