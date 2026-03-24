@@ -156,7 +156,7 @@ export default function Services() {
   return (
     <>
       <style>{css}</style>
-      <Box sx={{ bgcolor:C.ink, color:C.text, fontFamily:'"Outfit",sans-serif' }}>
+      <Box id="services" sx={{ bgcolor:C.ink, color:C.text, fontFamily:'"Outfit",sans-serif' }}>
 
         {/* ══ HERO BANNER ══ */}
         <Box sx={{ pt:'120px', pb:'80px', position:'relative', overflow:'hidden', background:`linear-gradient(160deg,${C.ink} 0%,${C.ink2} 100%)` }}>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -66,7 +67,7 @@ const NAV_LINKS = [
   { label: "Home",     href: "#home",     icon: <HomeOutlinedIcon />        },
   { label: "Products", href: "#products", icon: <Inventory2OutlinedIcon />  },
   { label: "Services", href: "#services", icon: <BuildOutlinedIcon />       },
-  { label: "Contact",  href: "#contact",  icon: <MailOutlineIcon />         },
+  { label: "Contact",  href: "contact",  icon: <MailOutlineIcon />         },
 ];
 
 // ══════════════════════════════════════════════════════════
@@ -168,7 +169,7 @@ function NavbarInner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("home");
   const [cartCount]                 = useState(0);
-
+  const navigate = useNavigate();
   const stuck = useScrollTrigger({ disableHysteresis: true, threshold: 60 });
 
   // Highlight active section on scroll
@@ -272,41 +273,24 @@ function NavbarInner() {
                 </NavIconBtn>
               </Box>
 
-              {/* Account button — hidden on xs */}
               <Button
-                startIcon={<PersonOutlineIcon />}
-                sx={{
-                  display: { xs: "none", sm: "inline-flex" },
-                  px: 2.75,
-                  py: 1.25,
-                  borderRadius: "4px",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  letterSpacing: "0.8px",
-                  textTransform: "uppercase",
-                  background: GOLD,
-                  color: INK,
-                  transition: EASE,
-                  position: "relative",
-                  overflow: "hidden",
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    inset: 0,
-                    background: "rgba(255,255,255,0.06)",
-                    transform: "translateX(-100%)",
-                    transition: "transform 0.4s ease",
-                  },
-                  "&:hover": {
-                    background: GOLD2,
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 12px 32px rgba(232,160,32,0.35)",
-                    "&::before": { transform: "translateX(0)" },
-                  },
-                }}
-              >
-                Account
-              </Button>
+  onClick={() => navigate("/login")}
+  startIcon={<PersonOutlineIcon />}
+  sx={{
+    display: { xs: "none", sm: "inline-flex" },
+    px: 2.75,
+    py: 1.25,
+    borderRadius: "4px",
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: "0.8px",
+    textTransform: "uppercase",
+    background: GOLD,
+    color: INK,
+  }}
+>
+  Account
+</Button>
 
               {/* Burger — mobile only */}
               <IconButton
@@ -476,25 +460,29 @@ function NavbarInner() {
           </Stack>
 
           <Button
-            fullWidth
-            startIcon={<AccountCircleOutlinedIcon />}
-            sx={{
-              py: 1.75,
-              borderRadius: "10px",
-              fontSize: 15,
-              fontWeight: 700,
-              letterSpacing: "0.8px",
-              textTransform: "uppercase",
-              background: GOLD,
-              color: INK,
-              "&:hover": {
-                background: GOLD2,
-                boxShadow: "0 12px 32px rgba(232,160,32,0.35)",
-              },
-            }}
-          >
-            Account
-          </Button>
+  fullWidth
+  startIcon={<AccountCircleOutlinedIcon />}
+  onClick={() => {
+    setDrawerOpen(false);  
+    navigate("/login");     
+  }}
+  sx={{
+    py: 1.75,
+    borderRadius: "10px",
+    fontSize: 15,
+    fontWeight: 700,
+    letterSpacing: "0.8px",
+    textTransform: "uppercase",
+    background: GOLD,
+    color: INK,
+    "&:hover": {
+      background: GOLD2,
+      boxShadow: "0 12px 32px rgba(232,160,32,0.35)",
+    },
+  }}
+>
+  Account
+</Button>
         </Box>
       </Drawer>
 
