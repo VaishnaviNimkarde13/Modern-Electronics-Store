@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Container,
@@ -18,8 +18,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BoltIcon from '@mui/icons-material/Bolt';
 import BuildIcon from '@mui/icons-material/Build';
+import { useCart } from '../context/CartContext';
 
-// Color tokens matching the HTML design
 const colors = {
   ink: '#0e0d0b',
   ink2: '#1a1916',
@@ -37,7 +37,106 @@ const colors = {
   border2: 'rgba(240,235,224,0.08)',
 };
 
-// Complete product data with all categories
+const animations = `
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeRight {
+    from {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 200%;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-card {
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  
+  .animate-card.visible {
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .animate-feature {
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  .animate-feature.visible {
+    animation: scaleIn 0.5s ease forwards;
+  }
+
+  .animate-header {
+    opacity: 0;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  
+  .animate-header.visible {
+    animation: fadeLeft 0.7s ease forwards;
+  }
+
+  .animate-tabs {
+    opacity: 0;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  
+  .animate-tabs.visible {
+    animation: fadeRight 0.7s ease forwards;
+  }
+`;
+
 const productData = {
   laptops: [
     { id: 1, name: 'MacBook Air M2 13‑inch', price: 114900, originalPrice: 134900, rating: 5, reviews: 312, image: '💻', badge: 'New', badgeType: 'new', specs: 'M2 chip, 8GB RAM, 256GB SSD', category: 'Laptop' },
@@ -79,15 +178,37 @@ const categories = [
   { label: 'Accessories', key: 'accessories', icon: '🖱️' }
 ];
 
-const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlisted }) => {
+const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlisted, index }) => {
   const [hover, setHover] = useState(false);
+  const cardRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
   
   const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : 0;
   
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+  
   return (
     <Box
+      ref={cardRef}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      className={`animate-card ${isVisible ? 'visible' : ''}`}
       sx={{
         width: "100%",
         maxWidth: 320,
@@ -100,15 +221,40 @@ const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlist
         flexDirection: "column",
         background: "linear-gradient(145deg,#1a1916,#0e0d0b)",
         border: "1px solid rgba(255,255,255,0.08)",
-        transition: "all .35s ease",
-        "&:hover": {
+        transition: "all .35s cubic-bezier(0.4, 0, 0.2, 1)",
+        '&:hover': {
           transform: "translateY(-8px)",
           borderColor: "rgba(232,160,32,0.3)",
           boxShadow: "0 30px 80px rgba(0,0,0,0.6)",
         },
       }}
     >
-      {/* IMAGE SECTION */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '-100%',
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+            transition: 'left 0.5s ease',
+            ...(hover && {
+              left: '200%',
+              transition: 'left 0.5s ease',
+            }),
+          },
+        }}
+      />
+      
       <Box
         sx={{
           height: 280,
@@ -133,13 +279,13 @@ const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlist
               bgcolor: product.badgeType === "new" ? "#7a9e7e" : product.badgeType === "hot" ? "#c44a1a" : "#e8a020",
               color: product.badgeType === "sale" ? "#000" : "#fff",
               zIndex: 2,
+              animation: hover ? 'pulse 0.5s ease' : 'none',
             }}
           >
             {product.badge}
           </Box>
         )}
 
-        {/* Wishlist Icon */}
         <IconButton
           onClick={() => onWishlist(product.id)}
           sx={{
@@ -148,29 +294,29 @@ const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlist
             right: 16,
             bgcolor: "rgba(0,0,0,0.5)",
             opacity: hover ? 1 : 0,
-            transition: "0.3s",
+            transition: "opacity 0.3s ease, transform 0.2s ease",
+            transform: hover ? "scale(1)" : "scale(0.8)",
             zIndex: 2,
             '&:hover': {
               bgcolor: "rgba(0,0,0,0.7)",
+              transform: "scale(1.1)",
             }
           }}
         >
           {isWishlisted ? <FavoriteIcon sx={{ color: "#ff6b6b" }} /> : <FavoriteBorderIcon sx={{ color: "#aaa" }} />}
         </IconButton>
 
-        {/* Product Image */}
         <Box
           sx={{
             fontSize: 90,
             transform: hover ? "scale(1.05)" : "scale(1)",
-            transition: "0.4s",
+            transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           {product.image}
         </Box>
       </Box>
 
-      {/* CONTENT SECTION */}
       <Box
         sx={{
           flex: 1,
@@ -243,7 +389,6 @@ const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlist
           </Box>
         </Box>
 
-        {/* Action Buttons - Add to Bag and View Eye */}
         <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
           <Button
             fullWidth
@@ -251,20 +396,20 @@ const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlist
             sx={{
               opacity: hover ? 1 : 0,
               transform: hover ? "translateY(0)" : "translateY(10px)",
-              transition: "0.3s",
+              transition: "opacity 0.3s ease, transform 0.3s ease",
               background: "linear-gradient(135deg,#e8a020,#f5b840)",
               color: "#000",
               fontWeight: 700,
               fontSize: 12,
               '&:hover': {
                 background: "linear-gradient(135deg,#f5b840,#e8a020)",
+                transform: "scale(1.02)",
               }
             }}
           >
             ADD TO BAG
           </Button>
           
-          {/* View Eye Icon */}
           <IconButton
             onClick={() => onQuickView(product)}
             sx={{
@@ -275,10 +420,11 @@ const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlist
               height: 42,
               opacity: hover ? 1 : 0,
               transform: hover ? "translateY(0)" : "translateY(10px)",
-              transition: "0.3s",
+              transition: "opacity 0.3s ease, transform 0.3s ease",
               '&:hover': {
                 color: colors.gold,
                 bgcolor: "rgba(232,160,32,0.1)",
+                transform: "scale(1.05)",
               }
             }}
           >
@@ -293,15 +439,65 @@ const ProductCard = ({ product, onAddToCart, onWishlist, onQuickView, isWishlist
 const Products = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [wishlist, setWishlist] = useState({});
+  const [headerVisible, setHeaderVisible] = useState(false);
+  const [tabsVisible, setTabsVisible] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   
+  const headerRef = useRef(null);
+  const tabsRef = useRef(null);
+  
   const currentCategory = categories[selectedTab].key;
   const currentProducts = productData[currentCategory];
   
+  const { addToCart } = useCart();
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHeaderVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    
+    if (headerRef.current) {
+      observer.observe(headerRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTabsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    
+    if (tabsRef.current) {
+      observer.observe(tabsRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, []);
+  
   const handleAddToCart = (product) => {
-    alert(`${product.name} added to cart!`);
+    const cartProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      category: product.category,
+      image: product.image
+    };
+    addToCart(cartProduct);
   };
   
   const handleWishlist = (productId) => {
@@ -310,7 +506,7 @@ const Products = () => {
       [productId]: !prev[productId]
     }));
     const isAdding = !wishlist[productId];
-    alert(isAdding ? 'Added to wishlist!' : 'Removed from wishlist!');
+    console.log(isAdding ? 'Added to wishlist!' : 'Removed from wishlist!');
   };
   
   const handleQuickView = (product) => {
@@ -318,243 +514,263 @@ const Products = () => {
   };
   
   return (
-    <Box sx={{ bgcolor: colors.ink, minHeight: '100vh', pt: { xs: 2, md: 4 }, pb: 8 }}>
-      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-        {/* Header Section */}
-        <Box 
-          sx={{ 
-            mb: 6, 
-            mt: { xs: 2, md: 4 },
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: { xs: 'flex-start', md: 'flex-end' },
-            gap: { xs: 3, md: 4 },
-            px: { xs: 0, sm: 2, md: 5 } 
-          }}
-        >
-          {/* Left side - Heading */}
-          <Box sx={{ pl: 0 }}>
-            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <Box sx={{ width: 28, height: 1.5, bgcolor: colors.gold }} />
+    <>
+      <style>{animations}</style>
+      <Box sx={{ bgcolor: colors.ink, minHeight: '100vh', pt: { xs: 2, md: 4 }, pb: 0 }}>
+        <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+          <Box 
+            ref={headerRef}
+            sx={{ 
+              mb: 6, 
+              mt: { xs: 2, md: 4 },
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              justifyContent: 'space-between',
+              alignItems: { xs: 'flex-start', md: 'flex-end' },
+              gap: { xs: 3, md: 4 },
+            }}
+          >
+            <Box className={`animate-header ${headerVisible ? 'visible' : ''}`} sx={{ pl: 0 }}>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <Box sx={{ width: 28, height: 1.5, bgcolor: colors.gold }} />
+                <Typography
+                  sx={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: 3,
+                    color: colors.gold,
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  Our Collection
+                </Typography>
+                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: colors.gold, opacity: 0.5 }} />
+              </Box>
               <Typography
+                variant="h1"
                 sx={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: 3,
-                  color: colors.gold,
-                  textTransform: 'uppercase'
+                  fontFamily: 'Playfair Display, serif',
+                  fontSize: { xs: 32, sm: 42, md: 52 },
+                  fontWeight: 900,
+                  color: colors.text,
+                  lineHeight: 1.1
                 }}
               >
-                Our Collection
+                Explore <span style={{
+                  background: `linear-gradient(135deg, ${colors.gold}, ${colors.gold2}, ${colors.amber})`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>Premium</span><br />
+                Electronics
               </Typography>
-              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: colors.gold, opacity: 0.5 }} />
             </Box>
-            <Typography
-              variant="h1"
+            
+            <Paper
+              ref={tabsRef}
+              elevation={0}
+              className={`animate-tabs ${tabsVisible ? 'visible' : ''}`}
               sx={{
-                fontFamily: 'Playfair Display, serif',
-                fontSize: { xs: 32, sm: 42, md: 52 },
-                fontWeight: 900,
-                color: colors.text,
-                lineHeight: 1.1
+                display: 'inline-flex',
+                gap: { xs: 0.25, sm: 0.5, md: 0.5 },
+                bgcolor: colors.ink3,
+                p: { xs: 0.4, sm: 0.5, md: 0.5 },
+                borderRadius: 1.5,
+                border: `1px solid ${colors.border2}`,
+                flexShrink: 0,
+                flexWrap: 'nowrap',
+                width: 'auto',
               }}
             >
-              Explore <span style={{
-                background: `linear-gradient(135deg, ${colors.gold}, ${colors.gold2}, ${colors.amber})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}>Premium</span><br />
-              Electronics
-            </Typography>
+              {categories.map((cat, idx) => (
+                <Button
+                  key={idx}
+                  onClick={() => setSelectedTab(idx)}
+                  sx={{
+                    px: { xs: 0.8, sm: 1.2, md: 2 },
+                    py: { xs: 0.4, sm: 0.6, md: 0.75 },
+                    borderRadius: { xs: 1.2, sm: 2, md: 2.5 },
+                    fontSize: { xs: 8, sm: 9, md: 11 },
+                    fontWeight: selectedTab === idx ? 700 : 500,
+                    color: selectedTab === idx ? colors.ink : colors.muted,
+                    bgcolor: selectedTab === idx ? colors.gold : 'transparent',
+                    whiteSpace: 'nowrap',
+                    minWidth: 'auto',
+                    transition: 'all 0.35s ease',
+                    '&:hover': {
+                      bgcolor: selectedTab === idx ? colors.gold : 'rgba(255,255,255,0.05)',
+                      color: selectedTab === idx ? colors.ink : colors.text,
+                      transform: 'translateY(-2px)',
+                    }
+                  }}
+                >
+                  <span style={{ 
+                    marginRight: { xs: 2, sm: 4, md: 6 }, 
+                    fontSize: { xs: 9, sm: 10, md: 12 } 
+                  }}>
+                    {cat.icon}
+                  </span>
+                  {cat.label}
+                </Button>
+              ))}
+            </Paper>
           </Box>
           
-          {/* Right side - Category Tabs */}
-          <Paper
-            elevation={0}
-            sx={{
-              display: 'inline-flex',
-              gap: 0.5,
-              bgcolor: colors.ink3,
-              p: 0.5,
-              borderRadius: 1.5,
-              border: `1px solid ${colors.border2}`,
-              overflowX: 'auto',
-              flexShrink: 0,
-              mb: { xs: 0, md: 1 },
-              pr: 1,
-              mr: { xs: 0, sm: 2, md: 5 }
-            }}
-          >
-            {categories.map((cat, idx) => (
-              <Button
-                key={idx}
-                onClick={() => setSelectedTab(idx)}
-                sx={{
-                  px: { xs: 1.5, sm: 2 },
-                  py: 0.75,
-                  borderRadius: 2.5,
-                  fontSize: 11,
-                  fontWeight: selectedTab === idx ? 700 : 500,
-                  color: selectedTab === idx ? colors.ink : colors.muted,
-                  bgcolor: selectedTab === idx ? colors.gold : 'transparent',
-                  whiteSpace: 'nowrap',
-                  minWidth: 'auto',
-                  transition: 'all 0.35s ease',
-                  '&:hover': {
-                    bgcolor: selectedTab === idx ? colors.gold : 'rgba(255,255,255,0.05)',
-                    color: selectedTab === idx ? colors.ink : colors.text
-                  }
-                }}
-              >
-                <span style={{ marginRight: 6, fontSize: 12 }}>{cat.icon}</span>
-                {cat.label}
-              </Button>
-            ))}
-          </Paper>
-        </Box>
-        
-        {/* Products Grid */}
-        <Box sx={{ 
-          px: { xs: 0, sm: 2, md: 0 },
-          pl: { xs: 2, sm: 3, md: 4 }
-        }}>
-          <Grid
-            container
-            spacing={3}
-            sx={{
-              display: "flex",
-              justifyContent: { xs: "center", md: "flex-start" },
-            }}
-          >
-            {currentProducts.map((product, idx) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-                key={product.id}
-              >
-                <ProductCard
-                  product={product}
-                  onAddToCart={handleAddToCart}
-                  onWishlist={handleWishlist}
-                  onQuickView={handleQuickView}
-                  isWishlisted={wishlist[product.id] || false}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Container>
-      
-      {/* Feature Strip - Only height increased, width unchanged */}
-      <Box
-        sx={{
-          mt: 12,
-          py: 6,
-          bgcolor: colors.ink3,
-          borderTop: `1px solid ${colors.border}`,
-          borderBottom: `1px solid ${colors.border}`,
-          width: '100%',
-        }}
-      >
-        <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box 
-                sx={{ 
-                  px: 1.5,
-                  py: 8,
-                  textAlign: 'center', 
-                  transition: 'all 0.35s ease',
-                  '&:hover': { bgcolor: colors.ink4 }
-                }}
-              >
-                <Typography sx={{ fontSize: 28, mb: 1, display: 'block' }}>🚀</Typography>
-                <Typography sx={{ fontFamily: 'Playfair Display, serif', fontSize: 18, fontWeight: 700, color: colors.text, mb: 0.5 }}>
-                  Fast Delivery
-                </Typography>
-                <Typography sx={{ fontSize: 12, color: colors.muted, lineHeight: 1.4, px: 4,
-                  maxWidth: 300,
-                  margin: '0 auto' }}>
-                  Same-day dispatch on all in-stock orders above ₹999
-                </Typography>
-              </Box>
+          <Box sx={{ 
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            px: { xs: 1, sm: 2, md: 3 }
+          }}>
+            <Grid
+              container
+              spacing={3}
+              sx={{
+                maxWidth: '1400px',
+                margin: '0 auto',
+                justifyContent: { xs: 'center', sm: 'center', md: 'flex-start' },
+              }}
+            >
+              {currentProducts.map((product, idx) => (
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  lg={3}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                  key={product.id}
+                >
+                  <ProductCard
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    onWishlist={handleWishlist}
+                    onQuickView={handleQuickView}
+                    isWishlisted={wishlist[product.id] || false}
+                    index={idx}
+                  />
+                </Grid>
+              ))}
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box 
-                sx={{ 
-                  px: 1.5,
-                  py: 8,
-                  textAlign: 'center', 
-                  transition: 'all 0.35s ease',
-                  '&:hover': { bgcolor: colors.ink4 }
-                }}
-              >
-                <Typography sx={{ fontSize: 28, mb: 1, display: 'block' }}>🔒</Typography>
-                <Typography sx={{ fontFamily: 'Playfair Display, serif', fontSize: 18, fontWeight: 700, color: colors.text, mb: 0.5 }}>
-                  Genuine Products
-                </Typography>
-                <Typography sx={{ fontSize: 12, color: colors.muted, lineHeight: 1.4, px: 4,
-                  maxWidth: 300,
-                  margin: '0 auto' }}>
-                  100% authentic with official brand warranty included
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box 
-                sx={{ 
-                  px: 1.5,
-                  py: 8,
-                  textAlign: 'center', 
-                  transition: 'all 0.35s ease',
-                  '&:hover': { bgcolor: colors.ink4 }
-                }}
-              >
-                <Typography sx={{ fontSize: 28, mb: 1, display: 'block' }}>🛠️</Typography>
-                <Typography sx={{ fontFamily: 'Playfair Display, serif', fontSize: 18, fontWeight: 700, color: colors.text, mb: 0.5 }}>
-                  Expert Repair
-                </Typography>
-                <Typography sx={{ fontSize: 12, color: colors.muted, lineHeight: 1.4, px: 4,
-                  maxWidth: 300,
-                  margin: '0 auto' }}>
-                  Certified technicians, genuine parts, 90-day service warranty
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box 
-                sx={{ 
-                  px: 1.5,
-                  py: 8,
-                  textAlign: 'center', 
-                  transition: 'all 0.35s ease',
-                  '&:hover': { bgcolor: colors.ink4 }
-                }}
-              >
-                <Typography sx={{ fontSize: 28, mb: 1, display: 'block' }}>💬</Typography>
-                <Typography sx={{ fontFamily: 'Playfair Display, serif', fontSize: 18, fontWeight: 700, color: colors.text, mb: 0.5 }}>
-                  24/7 Support
-                </Typography>
-                <Typography sx={{ fontSize: 12, color: colors.muted, lineHeight: 1.4, px: 4,
-                  maxWidth: 300,
-                  margin: '0 auto' }}>
-                  WhatsApp, call, or visit — we're always here to help you
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
+          </Box>
         </Container>
+        
+        <Box
+          sx={{
+            mt: { xs: 8, sm: 10, md: 12 },
+            py: { xs: 5, sm: 5, md: 6 },
+            bgcolor: colors.ink3,
+            borderTop: `1px solid ${colors.border}`,
+            borderBottom: `1px solid ${colors.border}`,
+            width: '100%',
+            mb: 0,
+          }}
+        >
+          <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+            <Box sx={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              width: '100%',
+            }}>
+              <Grid
+                container
+                spacing={{ xs: 2, sm: 1.5, md: 1 }}
+                sx={{
+                  maxWidth: '1400px',
+                  margin: '0 auto',
+                  justifyContent: 'center',
+                }}
+              >
+                {[
+                  { icon: '🚀', title: 'Fast Delivery', desc: 'Same-day dispatch on all in-stock orders above ₹999' },
+                  { icon: '🔒', title: 'Genuine Products', desc: '100% authentic with official brand warranty included' },
+                  { icon: '🛠️', title: 'Expert Repair', desc: 'Certified technicians, genuine parts, 90-day service warranty' },
+                  { icon: '💬', title: '24/7 Support', desc: 'WhatsApp, call, or visit — we\'re always here to help you' }
+                ].map((feature, idx) => {
+                  const [isVisible, setIsVisible] = useState(false);
+                  const featureRef = useRef(null);
+                  
+                  useEffect(() => {
+                    const observer = new IntersectionObserver(
+                      ([entry]) => {
+                        if (entry.isIntersecting) {
+                          setIsVisible(true);
+                          observer.disconnect();
+                        }
+                      },
+                      { threshold: 0.2 }
+                    );
+                    
+                    if (featureRef.current) {
+                      observer.observe(featureRef.current);
+                    }
+                    
+                    return () => observer.disconnect();
+                  }, []);
+                  
+                  return (
+                    <Grid item xs={12} sm={6} md={3} key={idx} sx={{ display: 'flex', justifyContent: 'center' }}>
+                      <Box 
+                        ref={featureRef}
+                        className={`animate-feature ${isVisible ? 'visible' : ''}`}
+                        sx={{ 
+                          px: { xs: 2, sm: 1.5, md: 1.5 },
+                          py: { xs: 6, sm: 7, md: 8 },
+                          textAlign: 'center', 
+                          transition: 'all 0.35s ease',
+                          '&:hover': { 
+                            bgcolor: colors.ink4,
+                            transform: 'translateY(-4px)',
+                          },
+                          height: '100%',
+                          width: '100%',
+                          maxWidth: { xs: '100%', sm: '100%', md: '100%' },
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Typography sx={{ 
+                          fontSize: { xs: 32, sm: 30, md: 28 }, 
+                          mb: { xs: 1.5, sm: 1.2, md: 1 }, 
+                          display: 'block',
+                          transition: 'transform 0.3s ease',
+                          '&:hover': {
+                            transform: 'scale(1.1)',
+                          }
+                        }}>
+                          {feature.icon}
+                        </Typography>
+                        <Typography sx={{ 
+                          fontFamily: 'Playfair Display, serif', 
+                          fontSize: { xs: 18, sm: 18, md: 18 }, 
+                          fontWeight: 700, 
+                          color: colors.text, 
+                          mb: { xs: 1, sm: 0.8, md: 0.5 }
+                        }}>
+                          {feature.title}
+                        </Typography>
+                        <Typography sx={{ 
+                          fontSize: { xs: 12, sm: 12, md: 12 }, 
+                          color: colors.muted, 
+                          lineHeight: { xs: 1.5, sm: 1.45, md: 1.4 },
+                          px: { xs: 2, sm: 2, md: 4 },
+                          maxWidth: { xs: 280, sm: 260, md: 300 },
+                          margin: '0 auto'
+                        }}>
+                          {feature.desc}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </Box>
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
